@@ -1,18 +1,40 @@
 import { Box, Text, TextField, Image, Button } from "@skynexui/components";
 import React from "react";
 import appConfig from "../config.json";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function ChatPage() {
   const [message, setMessage] = React.useState("");
   const [chatList, setChatList] = React.useState([]);
 
+  React.useEffect(() => {
+    supabaseClient
+      .from("Messages")
+      .select("*")
+      .order("id", { ascending: false })
+      .then(({ data }) => {
+        setChatList(data);
+      });
+  }, []);
+
   function handleNewMessage(newMessage) {
     const message = {
-      id: chatList.length + 1,
       from: "levxyca",
       text: newMessage,
     };
-    setChatList([message, ...chatList]);
+
+    supabaseClient
+      .from("Messages")
+      .insert([message])
+      .then(({ data }) => {
+        setChatList([data[0], ...chatList]);
+      });
+
     setMessage("");
   }
 
@@ -164,9 +186,8 @@ function MessageList(props) {
                   display: "inline-block",
                   marginRight: "8px",
                 }}
-                src={`https://github.com/levxyca.png`}
+                src={`https://github.com/${message.from}.png`}
               />
-              <Text tag="strong">{message.from}</Text>
               <Text
                 styleSheet={{
                   fontSize: "12px",
