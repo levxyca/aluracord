@@ -35,7 +35,6 @@ export default function PaginaInicial() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: appConfig.theme.colors.primary[500],
           background: "hsla(260, 8%, 15%, 1)",
           background:
             "linear-gradient(90deg, hsla(260, 8%, 15%, 1) 0%, hsla(251, 12%, 26%, 1) 100%)",
@@ -61,7 +60,6 @@ export default function PaginaInicial() {
             boxShadow: "5px 5px 0em #454153",
             border: "1px solid #454153",
             backgroundColor: appConfig.theme.colors.neutrals[700],
-            opacity: "0.9",
           }}
         >
           {/* Formulário */}
