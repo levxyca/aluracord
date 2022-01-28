@@ -156,6 +156,7 @@ function MessageList(props) {
         display: "flex",
         flexDirection: "column-reverse",
         flex: 1,
+        overflowY: "scroll",
         color: appConfig.theme.colors.neutrals["000"],
         marginBottom: "16px",
       }}
