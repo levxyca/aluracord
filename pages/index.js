@@ -25,7 +25,9 @@ function Title(props) {
 
 export default function PaginaInicial() {
   const [username, setUsername] = React.useState("levxyca");
-  const [ImgDefault, setImgDefault] = React.useState("https://github.com/levxyca.png");
+  const [ImgDefault, setImgDefault] = React.useState(
+    "https://github.com/levxyca.png"
+  );
   const router = useRouter();
 
   return (
@@ -67,7 +69,7 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={function (event) {
               event.preventDefault();
-              router.push("/chat");
+              router.push(`/chat?username=${username}`);
             }}
             styleSheet={{
               display: "flex",
