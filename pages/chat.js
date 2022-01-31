@@ -3,11 +3,21 @@ import React from "react";
 import appConfig from "../config.json";
 import { useRouter } from "next/router";
 import { createClient } from "@supabase/supabase-js";
+import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+
+function listeningMessages(addMessage) {
+  return supabaseClient
+    .from("Messages")
+    .on("INSERT", (response) => {
+      addMessage(response.new);
+    })
+    .subscribe();
+}
 
 export default function ChatPage() {
   const router = useRouter();
@@ -23,6 +33,12 @@ export default function ChatPage() {
       .then(({ data }) => {
         setChatList(data);
       });
+
+    listeningMessages((newMessage) => {
+      setChatList((valueNowChatList) => {
+        return [newMessage, ...valueNowChatList];
+      });
+    });
   }, []);
 
   function handleNewMessage(newMessage) {
@@ -34,9 +50,7 @@ export default function ChatPage() {
     supabaseClient
       .from("Messages")
       .insert([message])
-      .then(({ data }) => {
-        setChatList([data[0], ...chatList]);
-      });
+      .then(({ data }) => {});
 
     setMessage("");
   }
@@ -104,6 +118,11 @@ export default function ChatPage() {
               backgroundColor: appConfig.theme.colors.neutrals[800],
               marginRight: "12px",
               color: appConfig.theme.colors.neutrals[200],
+            }}
+          />
+          <ButtonSendSticker
+            onStickerClick={(sticker) => {
+              handleNewMessage(":sticker: " + sticker);
             }}
           />
         </Box>
@@ -203,7 +222,11 @@ function MessageList(props) {
                 {new Date().toLocaleDateString()}
               </Text>
             </Box>
-            {message.text}
+            {message.text.startsWith(":sticker:") ? (
+              <Image src={message.text.replace(":sticker:", "")} />
+            ) : (
+              message.text
+            )}
           </Text>
         );
       })}
